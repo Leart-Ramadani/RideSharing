@@ -1,11 +1,21 @@
 import AccountBalanceWalletRoundedIcon from '@mui/icons-material/AccountBalanceWalletRounded'
+import AdminPanelSettingsRoundedIcon from '@mui/icons-material/AdminPanelSettingsRounded'
 import DirectionsCarFilledRoundedIcon from '@mui/icons-material/DirectionsCarFilledRounded'
 import DirectionsCarRoundedIcon from '@mui/icons-material/DirectionsCarRounded'
+import DiscountRoundedIcon from '@mui/icons-material/DiscountRounded'
 import GroupRoundedIcon from '@mui/icons-material/GroupRounded'
 import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded'
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded'
 import KeyboardDoubleArrowLeftRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowLeftRounded'
 import KeyboardDoubleArrowRightRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowRightRounded'
+import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded'
+import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded'
+import MonetizationOnRoundedIcon from '@mui/icons-material/MonetizationOnRounded'
+import PaymentsRoundedIcon from '@mui/icons-material/PaymentsRounded'
+import PendingActionsRoundedIcon from '@mui/icons-material/PendingActionsRounded'
+import PersonRoundedIcon from '@mui/icons-material/PersonRounded'
+import SavingsRoundedIcon from '@mui/icons-material/SavingsRounded'
+import StarRoundedIcon from '@mui/icons-material/StarRounded'
 import Drawer from '@mui/material/Drawer'
 import IconButton from '@mui/material/IconButton'
 import List from '@mui/material/List'
@@ -16,12 +26,24 @@ import { NavLink } from 'react-router-dom'
 
 const iconMap = {
   Dashboard: HomeRoundedIcon,
+  Users: PersonRoundedIcon,
+  Roles: AdminPanelSettingsRoundedIcon,
+  'User Roles': ManageAccountsRoundedIcon,
   Drivers: GroupsRoundedIcon,
   Vehicles: DirectionsCarRoundedIcon,
   Passengers: GroupRoundedIcon,
   Rides: DirectionsCarFilledRoundedIcon,
+  'Ride Requests': PendingActionsRoundedIcon,
+  Locations: LocationOnRoundedIcon,
+  Fares: MonetizationOnRoundedIcon,
   Payments: AccountBalanceWalletRoundedIcon,
+  Ratings: StarRoundedIcon,
+  'Promo Codes': DiscountRoundedIcon,
+  'Driver Payouts': SavingsRoundedIcon,
+  'Driver Payout': PaymentsRoundedIcon,
 }
+
+const sections = ['Overview', 'Identity', 'Management', 'Operations', 'Finance']
 
 function Sidebar({ collapsed, mobileOpen, navigationItems, onCloseMobile, onToggleCollapse }) {
   const sidebarContent = (
@@ -42,10 +64,10 @@ function Sidebar({ collapsed, mobileOpen, navigationItems, onCloseMobile, onTogg
         >
           {collapsed ? <KeyboardDoubleArrowRightRoundedIcon /> : <KeyboardDoubleArrowLeftRoundedIcon />}
         </IconButton>
-      </div>  
+      </div>
 
       <div className="mt-8 flex-1 overflow-y-auto">
-        {['Overview', 'Management', 'Operations', 'Finance'].map((section) => {
+        {sections.map((section) => {
           const items = navigationItems.filter((item) => item.section === section)
 
           if (!items.length) {
@@ -85,9 +107,11 @@ function Sidebar({ collapsed, mobileOpen, navigationItems, onCloseMobile, onTogg
                           justifyContent: 'center',
                         }}
                       >
-                        <Icon />
+                        {Icon && <Icon />}
                       </ListItemIcon>
-                      {!collapsed && <ListItemText primary={item.label} primaryTypographyProps={{ fontWeight: 600 }} />}
+                      {!collapsed && (
+                        <ListItemText primary={item.label} primaryTypographyProps={{ fontWeight: 600 }} />
+                      )}
                     </ListItemButton>
                   )
                 })}

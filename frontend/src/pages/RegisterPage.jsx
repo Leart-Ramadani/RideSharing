@@ -23,8 +23,6 @@ function RegisterPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // TODO: Validate that password === confirmPassword
-    // TODO: Send form data to the backend API (POST /api/auth/register)
     console.log('Register form submitted:', form)
   }
 
