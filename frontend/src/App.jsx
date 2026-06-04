@@ -53,7 +53,7 @@ function createAppTheme(mode) {
 }
 
 function App() {
-  const [colorMode, setColorMode] = useState(() => localStorage.getItem('ridesharing-admin-mode') || 'light')
+  const [colorMode, setColorMode] = useState('dark')
 
   useEffect(() => {
     localStorage.setItem('ridesharing-admin-mode', colorMode)

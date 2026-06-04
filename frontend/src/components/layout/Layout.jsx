@@ -6,50 +6,51 @@ import Navbar from './Navbar'
 import Sidebar from './Sidebar'
 
 export const navigationItems = [
-    { label: 'Dashboard', path: '/dashboard', section: 'Overview' },
+    { label: 'Dashboard', path: '/admin/dashboard', section: 'Overview' },
 
-    { label: 'Users', path: '/users', section: 'Identity' },
-    { label: 'Roles', path: '/roles', section: 'Identity' },
-    { label: 'User Roles', path: '/user-roles', section: 'Identity' },
+    { label: 'Users', path: '/admin/users', section: 'Identity' },
+    // { label: 'Roles', path: '/admin/roles', section: 'Identity' },
+    { label: 'User Roles', path: '/admin/user-roles', section: 'Identity' },
 
-    { label: 'Drivers', path: '/drivers', section: 'Management' },
-    { label: 'Vehicles', path: '/vehicles', section: 'Management' },
-    { label: 'Passengers', path: '/passengers', section: 'Management' },
+    { label: 'Drivers', path: '/admin/drivers', section: 'Management' },
+    { label: 'Vehicles', path: '/admin/vehicles', section: 'Management' },
+    { label: 'Passengers', path: '/admin/passengers', section: 'Management' },
 
-    { label: 'Rides', path: '/rides', section: 'Operations' },
-    { label: 'Ride Requests', path: '/ride-requests', section: 'Operations' },
-    { label: 'Locations', path: '/locations', section: 'Operations' },
+    { label: 'Rides', path: '/admin/rides', section: 'Operations' },
+    { label: 'Ride Requests', path: '/admin/ride-requests', section: 'Operations' },
 
-    { label: 'Fares', path: '/fares', section: 'Finance' },
-    { label: 'Payments', path: '/payments', section: 'Finance' },
-    { label: 'Ratings', path: '/ratings', section: 'Finance' },
-    { label: 'Promo Codes', path: '/promo-codes', section: 'Finance' },
-    { label: 'Driver Payouts', path: '/driver-payouts', section: 'Finance' },
+    { label: 'Fares', path: '/admin/fares', section: 'Finance' },
+    { label: 'Payments', path: '/admin/payments', section: 'Finance' },
+    { label: 'Ratings', path: '/admin/ratings', section: 'Finance' },
+    { label: 'Promo Codes', path: '/admin/promo-codes', section: 'Finance' },
+    { label: 'Driver Payouts', path: '/admin/driver-payouts', section: 'Finance' },
+
+    { label: 'My Profile', path: '/admin/profile', section: 'Account' },
 ]
 
 const pageDetails = {
-    '/dashboard': { title: 'Dashboard', subtitle: 'Overview of daily operations.' },
-    '/users': { title: 'Users', subtitle: 'Manage system user accounts.' },
-    '/roles': { title: 'Roles', subtitle: 'Manage roles and permissions.' },
-    '/user-roles': { title: 'User Roles', subtitle: 'Assign roles to users.' },
-    '/drivers': { title: 'Drivers', subtitle: 'Manage driver profiles and documents.' },
-    '/vehicles': { title: 'Vehicles', subtitle: 'Manage the vehicle fleet.' },
-    '/passengers': { title: 'Passengers', subtitle: 'Manage passenger accounts.' },
-    '/rides': { title: 'Rides', subtitle: 'View and manage trips.' },
-    '/ride-requests': { title: 'Ride Requests', subtitle: 'Manage incoming ride requests.' },
-    '/locations': { title: 'Locations', subtitle: 'Manage saved locations and zones.' },
-    '/fares': { title: 'Fares', subtitle: 'Configure fare rates and pricing.' },
-    '/payments': { title: 'Payments', subtitle: 'Track payments and transactions.' },
-    '/ratings': { title: 'Ratings', subtitle: 'View driver and passenger ratings.' },
-    '/promo-codes': { title: 'Promo Codes', subtitle: 'Manage discount and promo codes.' },
-    '/driver-payouts': { title: 'Driver Payouts', subtitle: 'Manage driver payout periods.' },
+    '/admin/dashboard':      { title: 'Dashboard',      subtitle: 'Overview of daily operations.' },
+    '/admin/users':          { title: 'Users',           subtitle: 'Manage system user accounts.' },
+    '/admin/roles':          { title: 'Roles',           subtitle: 'Manage roles and permissions.' },
+    '/admin/user-roles':     { title: 'User Roles',      subtitle: 'Assign roles to users.' },
+    '/admin/drivers':        { title: 'Drivers',         subtitle: 'Manage driver profiles and documents.' },
+    '/admin/vehicles':       { title: 'Vehicles',        subtitle: 'Manage the vehicle fleet.' },
+    '/admin/passengers':     { title: 'Passengers',      subtitle: 'Manage passenger accounts.' },
+    '/admin/rides':          { title: 'Rides',           subtitle: 'View and manage trips.' },
+    '/admin/ride-requests':  { title: 'Ride Requests',   subtitle: 'Manage incoming ride requests.' },
+    '/admin/fares':          { title: 'Fares',           subtitle: 'Configure fare rates and pricing.' },
+    '/admin/payments':       { title: 'Payments',        subtitle: 'Track payments and transactions.' },
+    '/admin/ratings':        { title: 'Ratings',         subtitle: 'View driver and passenger ratings.' },
+    '/admin/promo-codes':    { title: 'Promo Codes',     subtitle: 'Manage discount and promo codes.' },
+    '/admin/driver-payouts': { title: 'Driver Payouts',  subtitle: 'Manage driver payout periods.' },
+    '/admin/profile':        { title: 'My Profile',      subtitle: 'Update your personal information.' },
 }
 
 function AdminLayout({ colorMode, onToggleColorMode }) {
     const [mobileOpen, setMobileOpen] = useState(false)
     const [collapsed, setCollapsed] = useState(false)
     const location = useLocation()
-    const currentPage = pageDetails[location.pathname] ?? pageDetails['/dashboard']
+    const currentPage = pageDetails[location.pathname] ?? pageDetails['/admin/dashboard']
 
     const handleDrawerToggle = () => {
         setMobileOpen((currentValue) => !currentValue)
