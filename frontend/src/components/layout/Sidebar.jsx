@@ -1,13 +1,23 @@
 import AccountBalanceWalletRoundedIcon from '@mui/icons-material/AccountBalanceWalletRounded'
 import AdminPanelSettingsRoundedIcon from '@mui/icons-material/AdminPanelSettingsRounded'
+import AdminPanelSettingsRoundedIcon from '@mui/icons-material/AdminPanelSettingsRounded'
 import DirectionsCarFilledRoundedIcon from '@mui/icons-material/DirectionsCarFilledRounded'
 import DirectionsCarRoundedIcon from '@mui/icons-material/DirectionsCarRounded'
+import DiscountRoundedIcon from '@mui/icons-material/DiscountRounded'
 import DiscountRoundedIcon from '@mui/icons-material/DiscountRounded'
 import GroupRoundedIcon from '@mui/icons-material/GroupRounded'
 import GroupsRoundedIcon from '@mui/icons-material/GroupsRounded'
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded'
 import KeyboardDoubleArrowLeftRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowLeftRounded'
 import KeyboardDoubleArrowRightRoundedIcon from '@mui/icons-material/KeyboardDoubleArrowRightRounded'
+import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded'
+import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded'
+import MonetizationOnRoundedIcon from '@mui/icons-material/MonetizationOnRounded'
+import PaymentsRoundedIcon from '@mui/icons-material/PaymentsRounded'
+import PendingActionsRoundedIcon from '@mui/icons-material/PendingActionsRounded'
+import PersonRoundedIcon from '@mui/icons-material/PersonRounded'
+import SavingsRoundedIcon from '@mui/icons-material/SavingsRounded'
+import StarRoundedIcon from '@mui/icons-material/StarRounded'
 import LocationOnRoundedIcon from '@mui/icons-material/LocationOnRounded'
 import ManageAccountsRoundedIcon from '@mui/icons-material/ManageAccountsRounded'
 import MonetizationOnRoundedIcon from '@mui/icons-material/MonetizationOnRounded'
@@ -29,6 +39,9 @@ const iconMap = {
   Users: PersonRoundedIcon,
   Roles: AdminPanelSettingsRoundedIcon,
   'User Roles': ManageAccountsRoundedIcon,
+  Users: PersonRoundedIcon,
+  Roles: AdminPanelSettingsRoundedIcon,
+  'User Roles': ManageAccountsRoundedIcon,
   Drivers: GroupsRoundedIcon,
   Vehicles: DirectionsCarRoundedIcon,
   Passengers: GroupRoundedIcon,
@@ -36,14 +49,11 @@ const iconMap = {
   'Ride Requests': PendingActionsRoundedIcon,
   Locations: LocationOnRoundedIcon,
   Fares: MonetizationOnRoundedIcon,
+  'Ride Requests': PendingActionsRoundedIcon,
+  Locations: LocationOnRoundedIcon,
+  Fares: MonetizationOnRoundedIcon,
   Payments: AccountBalanceWalletRoundedIcon,
-  Ratings: StarRoundedIcon,
-  'Promo Codes': DiscountRoundedIcon,
-  'Driver Payouts': SavingsRoundedIcon,
-  'Driver Payout': PaymentsRoundedIcon,
 }
-
-const sections = ['Overview', 'Identity', 'Management', 'Operations', 'Finance']
 
 function Sidebar({ collapsed, mobileOpen, navigationItems, onCloseMobile, onToggleCollapse, panelTitle = 'Admin Panel' }) {
   const sidebarContent = (
@@ -108,7 +118,11 @@ function Sidebar({ collapsed, mobileOpen, navigationItems, onCloseMobile, onTogg
                         }}
                       >
                         {Icon && <Icon />}
+                        {Icon && <Icon />}
                       </ListItemIcon>
+                      {!collapsed && (
+                        <ListItemText primary={item.label} primaryTypographyProps={{ fontWeight: 600 }} />
+                      )}
                       {!collapsed && (
                         <ListItemText primary={item.label} primaryTypographyProps={{ fontWeight: 600 }} />
                       )}

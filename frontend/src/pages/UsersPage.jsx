@@ -14,6 +14,13 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import TextField from '@mui/material/TextField'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
 import StatsGrid from '../components/layout/StatsGrid'
 import api from '../services/api'
@@ -121,6 +128,7 @@ function UsersPage() {
           </Grid>
         </Box>
       </Paper>
+    </Box>
     </Box>
   )
 }
