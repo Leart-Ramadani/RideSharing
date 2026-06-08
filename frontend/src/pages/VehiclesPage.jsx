@@ -1,6 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import Alert from '@mui/material/Alert'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
+import Chip from '@mui/material/Chip'
+import CircularProgress from '@mui/material/CircularProgress'
 import Grid from '@mui/material/Grid'
 import MenuItem from '@mui/material/MenuItem'
 import Paper from '@mui/material/Paper'
@@ -12,85 +15,75 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import TextField from '@mui/material/TextField'
 import Typography from '@mui/material/Typography'
-import StatsGrid from '../components/layout/StatsGrid'
+import api from '../services/api'
 
-const stats = [
-  { label: 'Total Vehicles', value: '312', change: '+10 added this month' },
-  { label: 'Available', value: '289', change: 'Ready for dispatch' },
-  { label: 'In Maintenance', value: '23', change: '6 urgent repairs' },
-  { label: 'Unassigned', value: '11', change: 'No driver assigned' },
-]
-
-const sampleVehicles = [
-  { id: 1, driver: 'Amina Yusuf', brand: 'Toyota', model: 'Prius', year: '2022', color: 'White', plate: 'RS-2041', seats: 4, fuelType: 'Hybrid', status: 'Active' },
-  { id: 2, driver: 'Daniel Cruz', brand: 'Tesla', model: 'Model 3', year: '2023', color: 'Black', plate: 'EV-1032', seats: 5, fuelType: 'Electric', status: 'Active' },
-  { id: 3, driver: 'Unassigned', brand: 'Hyundai', model: 'Accent', year: '2020', color: 'Silver', plate: 'HY-5521', seats: 5, fuelType: 'Petrol', status: 'Maintenance' },
-]
+const emptyForm = { driver_id: '', make: '', model: '', year: '', color: '', plate_number: '', seats: '', fuel_type: 'Gasoline', status: 'Active' }
 
 function VehiclesPage() {
-  const [form, setForm] = useState({
-    driverId: '',
-    brand: '',
-    model: '',
-    year: '',
-    color: '',
-    plate: '',
-    seats: '',
-    fuelType: 'Petrol',
-    status: 'Active',
-  })
+  const [vehicles, setVehicles] = useState([])
+  const [drivers, setDrivers] = useState([])
+  const [form, setForm] = useState(emptyForm)
+  const [editId, setEditId] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
+  const fetchVehicles = () => api.get('/vehicles').then((r) => setVehicles(r.data)).catch(() => {})
+  useEffect(() => {
+    fetchVehicles()
+    api.get('/drivers').then((r) => setDrivers(r.data)).catch(() => {})
+  }, [])
+
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); setError(''); setLoading(true)
+    try {
+      editId ? await api.put(`/vehicles/${editId}`, form) : await api.post('/vehicles', form)
+      setForm(emptyForm); setEditId(null); fetchVehicles()
+    } catch (err) {
+      const errs = err.response?.data?.errors
+      setError(errs ? Object.values(errs).flat().join(' ') : 'An error occurred.')
+    } finally { setLoading(false) }
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    // TODO: Send POST request to /api/vehicles
-    console.log('New vehicle:', form)
+  const handleEdit = (v) => {
+    setEditId(v.id)
+    setForm({ driver_id: v.driver_id, make: v.make, model: v.model, year: v.year, color: v.color, plate_number: v.plate_number, seats: v.seats, fuel_type: v.fuel_type, status: v.status })
   }
+
+  const handleDelete = async (id) => { if (confirm('Delete this vehicle?')) { await api.delete(`/vehicles/${id}`); fetchVehicles() } }
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       <Typography variant="h4" fontWeight={700}>Vehicles</Typography>
 
-      <StatsGrid items={stats} />
-
       <Paper elevation={0} sx={{ p: 3, borderRadius: 3 }}>
         <Typography variant="h6" fontWeight={600} gutterBottom>Vehicle List</Typography>
         <TableContainer>
-          <Table>
+          <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell>#</TableCell>
-                <TableCell>Driver</TableCell>
-                <TableCell>Brand</TableCell>
-                <TableCell>Model</TableCell>
-                <TableCell>Year</TableCell>
-                <TableCell>Color</TableCell>
-                <TableCell>Plate</TableCell>
-                <TableCell>Seats</TableCell>
-                <TableCell>Fuel Type</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Actions</TableCell>
+                <TableCell>#</TableCell><TableCell>Driver</TableCell><TableCell>Make</TableCell><TableCell>Model</TableCell>
+                <TableCell>Year</TableCell><TableCell>Color</TableCell><TableCell>Plate</TableCell>
+                <TableCell>Seats</TableCell><TableCell>Fuel</TableCell><TableCell>Status</TableCell><TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {sampleVehicles.map((v) => (
+              {vehicles.map((v) => (
                 <TableRow key={v.id}>
                   <TableCell>{v.id}</TableCell>
-                  <TableCell>{v.driver}</TableCell>
-                  <TableCell>{v.brand}</TableCell>
+                  <TableCell>{v.driver ? `${v.driver.first_name} ${v.driver.last_name}` : '—'}</TableCell>
+                  <TableCell>{v.make}</TableCell>
                   <TableCell>{v.model}</TableCell>
                   <TableCell>{v.year}</TableCell>
                   <TableCell>{v.color}</TableCell>
-                  <TableCell>{v.plate}</TableCell>
+                  <TableCell>{v.plate_number}</TableCell>
                   <TableCell>{v.seats}</TableCell>
-                  <TableCell>{v.fuelType}</TableCell>
-                  <TableCell>{v.status}</TableCell>
+                  <TableCell>{v.fuel_type}</TableCell>
+                  <TableCell><Chip label={v.status} color={v.status === 'Active' ? 'success' : 'error'} size="small" /></TableCell>
                   <TableCell>
-                    <Button size="small">Edit</Button>
-                    <Button size="small" color="error">Delete</Button>
+                    <Button size="small" onClick={() => handleEdit(v)}>Edit</Button>
+                    <Button size="small" color="error" onClick={() => handleDelete(v.id)}>Delete</Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -100,50 +93,38 @@ function VehiclesPage() {
       </Paper>
 
       <Paper elevation={0} sx={{ p: 3, borderRadius: 3 }}>
-        <Typography variant="h6" fontWeight={600} gutterBottom>Add New Vehicle</Typography>
+        <Typography variant="h6" fontWeight={600} gutterBottom>{editId ? 'Edit Vehicle' : 'Add New Vehicle'}</Typography>
+        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
         <Box component="form" onSubmit={handleSubmit}>
           <Grid container spacing={2}>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField select label="Driver" name="driverId" value={form.driverId} onChange={handleChange} fullWidth required>
-                <MenuItem value="1">Amina Yusuf</MenuItem>
-                <MenuItem value="2">Daniel Cruz</MenuItem>
+            <Grid size={4}>
+              <TextField select label="Driver" name="driver_id" value={form.driver_id} onChange={handleChange} fullWidth required>
+                {drivers.map((d) => <MenuItem key={d.id} value={d.id}>{d.first_name} {d.last_name}</MenuItem>)}
               </TextField>
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField label="Brand" name="brand" value={form.brand} onChange={handleChange} fullWidth required />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField label="Model" name="model" value={form.model} onChange={handleChange} fullWidth required />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField label="Year" name="year" type="number" value={form.year} onChange={handleChange} fullWidth />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField label="Color" name="color" value={form.color} onChange={handleChange} fullWidth />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField label="Plate Number" name="plate" value={form.plate} onChange={handleChange} fullWidth />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField label="Number of Seats" name="seats" type="number" value={form.seats} onChange={handleChange} fullWidth />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField select label="Fuel Type" name="fuelType" value={form.fuelType} onChange={handleChange} fullWidth>
-                <MenuItem value="Petrol">Petrol</MenuItem>
-                <MenuItem value="Diesel">Diesel</MenuItem>
-                <MenuItem value="Electric">Electric</MenuItem>
-                <MenuItem value="Hybrid">Hybrid</MenuItem>
+            <Grid size={4}><TextField label="Make" name="make" value={form.make} onChange={handleChange} fullWidth required /></Grid>
+            <Grid size={4}><TextField label="Model" name="model" value={form.model} onChange={handleChange} fullWidth required /></Grid>
+            <Grid size={3}><TextField label="Year" name="year" type="number" value={form.year} onChange={handleChange} fullWidth required /></Grid>
+            <Grid size={3}><TextField label="Color" name="color" value={form.color} onChange={handleChange} fullWidth required /></Grid>
+            <Grid size={3}><TextField label="Plate Number" name="plate_number" value={form.plate_number} onChange={handleChange} fullWidth required /></Grid>
+            <Grid size={3}><TextField label="Seats" name="seats" type="number" value={form.seats} onChange={handleChange} fullWidth required /></Grid>
+            <Grid size={4}>
+              <TextField select label="Fuel Type" name="fuel_type" value={form.fuel_type} onChange={handleChange} fullWidth>
+                {['Gasoline', 'Diesel', 'Electric', 'Hybrid'].map((f) => <MenuItem key={f} value={f}>{f}</MenuItem>)}
               </TextField>
             </Grid>
-            <Grid size={{ xs: 12, sm: 6 }}>
+            <Grid size={4}>
               <TextField select label="Status" name="status" value={form.status} onChange={handleChange} fullWidth>
-                <MenuItem value="Active">Active</MenuItem>
-                <MenuItem value="Maintenance">Maintenance</MenuItem>
-                <MenuItem value="Inactive">Inactive</MenuItem>
+                {['Active', 'Inactive'].map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
               </TextField>
+            </Grid>
+            <Grid size={12}>
+              <Button type="submit" variant="contained" disabled={loading}>
+                {loading ? <CircularProgress size={20} color="inherit" /> : editId ? 'Update Vehicle' : 'Add Vehicle'}
+              </Button>
+              {editId && <Button sx={{ ml: 1 }} onClick={() => { setEditId(null); setForm(emptyForm) }}>Cancel</Button>}
             </Grid>
           </Grid>
-          <Button type="submit" variant="contained" sx={{ mt: 2 }}>Save Vehicle</Button>
         </Box>
       </Paper>
     </Box>

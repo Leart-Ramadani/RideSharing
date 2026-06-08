@@ -1,37 +1,34 @@
 import { useState } from 'react'
-import DarkModeRoundedIcon from '@mui/icons-material/DarkModeRounded'
-import LightModeRoundedIcon from '@mui/icons-material/LightModeRounded'
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded'
-import MenuRoundedIcon from '@mui/icons-material/MenuRounded'
-import NotificationsNoneRoundedIcon from '@mui/icons-material/NotificationsNoneRounded'
-import SearchRoundedIcon from '@mui/icons-material/SearchRounded'
 import AppBar from '@mui/material/AppBar'
 import Avatar from '@mui/material/Avatar'
-import Badge from '@mui/material/Badge'
 import Box from '@mui/material/Box'
-import IconButton from '@mui/material/IconButton'
-import InputBase from '@mui/material/InputBase'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import Paper from '@mui/material/Paper'
 import Stack from '@mui/material/Stack'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 
 const COLLAPSED_SIDEBAR_WIDTH = 92
 const EXPANDED_SIDEBAR_WIDTH = 280
 
 function Navbar({ collapsed, pageSubtitle, pageTitle }) {
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
   const [anchorEl, setAnchorEl] = useState(null)
   const sidebarWidth = collapsed ? COLLAPSED_SIDEBAR_WIDTH : EXPANDED_SIDEBAR_WIDTH
 
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget)
+  const handleLogout = async () => {
+    setAnchorEl(null)
+    await logout()
+    navigate('/login')
   }
 
-  const handleMenuClose = () => {
-    setAnchorEl(null)
-  }
+  const initials = user ? `${user.name?.[0] ?? ''}${user.last_name?.[0] ?? ''}`.toUpperCase() : 'AU'
+  const displayName = user ? `${user.name} ${user.last_name}` : 'Admin User'
+  const roleLabel = user?.roles?.[0]?.name ?? 'System User'
 
   return (
     <AppBar
@@ -59,20 +56,18 @@ function Navbar({ collapsed, pageSubtitle, pageTitle }) {
         <Stack direction="row" spacing={1.5} alignItems="center">
           <button
             type="button"
-            onClick={handleMenuOpen}
+            onClick={(e) => setAnchorEl(e.currentTarget)}
             className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white/70 px-2 py-1.5 shadow-sm transition hover:border-sky-300 hover:shadow-md dark:border-slate-700 dark:bg-slate-900/80 dark:hover:border-sky-700"
           >
-            <Avatar sx={{ width: 38, height: 38, bgcolor: 'primary.main' }}>AU</Avatar>
+            <Avatar sx={{ width: 38, height: 38, bgcolor: 'primary.main' }}>{initials}</Avatar>
             <Box className="hidden text-left sm:block">
-              <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">Admin User</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">System Administrator</p>
+              <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{displayName}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">{roleLabel}</p>
             </Box>
           </button>
 
-          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
-            <MenuItem onClick={handleMenuClose} className="flex items-center gap-2">
+          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
+            <MenuItem onClick={handleLogout} sx={{ gap: 1 }}>
               <LogoutRoundedIcon fontSize="small" />
               Logout
             </MenuItem>

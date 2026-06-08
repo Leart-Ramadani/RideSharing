@@ -1,35 +1,77 @@
-import DataListCard from '../components/layout/DataListCard'
-import PageIntro from '../components/layout/PageIntro'
+import { useEffect, useState } from 'react'
+import Box from '@mui/material/Box'
+import Paper from '@mui/material/Paper'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableHead from '@mui/material/TableHead'
+import TableRow from '@mui/material/TableRow'
+import Typography from '@mui/material/Typography'
 import StatsGrid from '../components/layout/StatsGrid'
-
-const stats = [
-  { label: 'Active passengers', value: '8,420', change: '+184 this week' },
-  { label: 'Support flags', value: '13', change: '3 need follow-up' },
-  { label: 'New signups', value: '256', change: '+9% today' },
-  { label: 'Average trip spend', value: '$17.40', change: '+$1.10 this month' },
-]
-
-const passengers = [
-  { primary: 'Sara Johnson', secondary: 'Completed 48 rides • Premium member', value: 'Healthy account' },
-  { primary: 'Niko Petrov', secondary: 'Recent refund request under review', value: 'Needs review' },
-  { primary: 'Maria Chen', secondary: 'Top airport route customer', value: 'Frequent rider' },
-]
+import api from '../services/api'
 
 function PassengersPage() {
+  const [passengers, setPassengers] = useState([])
+
+  useEffect(() => {
+    api.get('/passengers').then((r) => setPassengers(r.data)).catch(() => {})
+  }, [])
+
+  const stats = [
+    { label: 'Total Passengers', value: passengers.length, change: 'Registered passengers' },
+    {
+      label: 'Avg Rating',
+      value: passengers.length
+        ? (passengers.reduce((s, p) => s + parseFloat(p.average_rating || 0), 0) / passengers.length).toFixed(1)
+        : '—',
+      change: 'Across all passengers',
+    },
+  ]
+
   return (
-    <div className="space-y-6">
-      <PageIntro
-        eyebrow="Management"
-        title="Passengers"
-        text="Monitor rider growth, account health, and support-related issues from one place."
-      />
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+      <Typography variant="h4" fontWeight={700}>Passengers</Typography>
       <StatsGrid items={stats} />
-      <DataListCard
-        title="Passenger insights"
-        subtitle="Example rider data blocks for your admin dashboard."
-        items={passengers}
-      />
-    </div>
+
+      <Paper elevation={0} sx={{ p: 3, borderRadius: 3 }}>
+        <Typography variant="h6" fontWeight={600} gutterBottom>Passenger List</Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          Passengers are created through registration only.
+        </Typography>
+        <TableContainer>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>#</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Phone</TableCell>
+                <TableCell>Registered</TableCell>
+                <TableCell>Rating</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {passengers.map((p) => (
+                <TableRow key={p.id}>
+                  <TableCell>{p.id}</TableCell>
+                  <TableCell>{p.first_name} {p.user?.last_name}</TableCell>
+                  <TableCell>{p.email}</TableCell>
+                  <TableCell>{p.phone}</TableCell>
+                  <TableCell>{p.registered_at}</TableCell>
+                  <TableCell>{p.average_rating ?? '—'}</TableCell>
+                </TableRow>
+              ))}
+              {passengers.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6} align="center">No passengers registered yet.</TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
+    </Box>
   )
 }
 
