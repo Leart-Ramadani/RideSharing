@@ -105,8 +105,12 @@ npm install
 ---
 
 ## 3. Create .env file
+cp .env.example .env
+add the backend url to the VITE config
 ```env
-VITE_API_URL=http://127.0.0.1:8080/api
+VITE_API_URL=http://url-from-backend-server/api      
+example: VITE_API_URL=http://127.0.0.1:8080/api
+
 ```
 
 ---
